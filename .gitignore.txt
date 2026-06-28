@@ -1,0 +1,19 @@
+# Fichier de configuration local (contient votre mot de passe MySQL)
+connexion_config.py
+
+# Fichiers Python compiles
+__pycache__/
+*.pyc
+*.pyo
+
+# Environnement virtuel Python
+venv/
+env/
+
+# Fichiers systeme
+.DS_Store
+Thumbs.db
+
+# Fichiers d'editeur
+.vscode/
+.idea/
