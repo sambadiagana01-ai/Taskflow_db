@@ -1,31 +1,33 @@
 # connexion.py
-
 import mysql.connector
 from mysql.connector import Error
 
-# Informations de connexion à adapter selon votre configuration
+# Informations de connexion a adapter selon votre configuration
 CONFIG = {
     "host": "localhost",       # adresse du serveur MySQL
-    "user": "root",            # nom d'utilisateur MySQL
-    "password": "",            # mot de passe MySQL
-    "database": "taskflow_db", # nom de la base de données
+    "user": "root",            # votre nom d'utilisateur MySQL
+    "password": "",  # votre mot de passe MySQL
+    "database": "taskflow_db", # nom de la base creee
     "charset": "utf8mb4"
 }
 
+
 def obtenir_connexion():
     """
-    Ouvre et retourne une connexion à la base de données.
-    Retourne None si la connexion échoue.
+    Ouvre et retourne une connexion a la base de donnees.
+    Retourne None si la connexion echoue.
+
+    Utilisation dans les autres modules :
+        conn = obtenir_connexion()
+        if conn:
+            # faire des requetes
+            conn.close()
     """
     try:
         conn = mysql.connector.connect(**CONFIG)
-
-        if conn.is_connected():
-            print("Connexion à la base de données réussie.")
-            return conn
-
+        return conn
     except Error as e:
-        print(f"Erreur de connexion : {e}")
+        print(f"Erreur de connexion a la base de donnees : {e}")
         return None
 
 
@@ -35,4 +37,19 @@ def fermer_connexion(conn):
     """
     if conn is not None and conn.is_connected():
         conn.close()
-        print("Connexion fermée.")
+
+
+def test_connexion():
+    """
+    Teste la connexion et affiche un message clair.
+    """
+    conn = obtenir_connexion()
+    if conn:
+        print("Connexion reussie !")
+        fermer_connexion(conn)
+    else:
+        print("Echec de la connexion.")
+
+
+if __name__ == "__main__":
+    test_connexion()
