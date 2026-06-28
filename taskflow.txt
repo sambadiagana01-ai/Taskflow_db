@@ -1,0 +1,89 @@
+mysql -u root -p
+
+CREATE DATABASE taskflow_db 
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
+
+CREATE DATABASE taskflow_db
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci; 
+
+
+USE taskflow_db;
+
+
+-- 1. Table UTILISATEUR (aucune dependance)
+
+CREATE TABLE UTILISATEUR (
+id_user         INT     PRIMARY KEY AUTO_INCREMENT,
+nom_utilisateur VARCHAR(50) NOT NULL UNIQUE,   
+mot_de_passe    VARCHAR(255)  NOT NULL,
+email           VARCHAR(100)  UNIQUE,
+date_creation   DATETIME      DEFAULT NOW()
+);
+
+-- 2. Table CATEGORIE (depend de UTILISATEUR)
+
+CREATE TABLE CATEGORIE (
+id_categorie   
+INT          
+PRIMARY KEY AUTO_INCREMENT,
+nom_categorie  VARCHAR(50)  NOT NULL,
+couleur        VARCHAR(20)  DEFAULT 'blanc',            
+id_user      INT  NOT NULL,
+FOREIGN KEY (id_user) REFERENCES UTILISATEUR(id_user) ON DELETE CASCADE
+);
+
+-- 3. Table TACHE (depend de UTILISATEUR et CATEGORIE)
+
+
+CREATE TABLE TACHE (
+id_tache     INT   PRIMARY KEY AUTO_INCREMENT,    
+titre        VARCHAR(100)  NOT NULL,
+description    TEXT,
+date_creation  DATETIME      DEFAULT NOW(),
+date_echeance  DATE,
+priorite       ENUM('basse','normale','haute','urgente') DEFAULT 'normale',
+statut      ENUM('a_faire','en_cours','terminee','annulee') DEFAULT 
+'a_faire',
+id_user     INT    NOT NULL,       
+id_categorie   INT,
+FOREIGN KEY (id_user)      REFERENCES UTILISATEUR(id_user) ON DELETE CASCADE,
+FOREIGN KEY (id_categorie) REFERENCES CATEGORIE(id_categorie) ON DELETE SET 
+NULL
+);
+
+-- 4. Table ETIQUETTE (depend de UTILISATEUR)
+
+CREATE TABLE ETIQUETTE (
+id_etiquette   INT    PRIMARY KEY AUTO_INCREMENT,
+nom_etiquette  VARCHAR(30) NOT NULL,
+id_user        INT         NOT NULL,
+FOREIGN KEY (id_user) REFERENCES UTILISATEUR(id_user) ON DELETE CASCADE
+);
+
+-- 5. Table TACHE_ETIQUETTE (depend de TACHE et ETIQUETTE)
+
+
+CREATE TABLE TACHE_ETIQUETTE (
+id_tache      INT NOT NULL,
+id_etiquette  INT NOT NULL,
+PRIMARY KEY (id_tache, id_etiquette),
+FOREIGN KEY (id_tache)   REFERENCES TACHE(id_tache)   ON DELETE  
+CASCADE,
+FOREIGN KEY (id_etiquette) REFERENCES ETIQUETTE(id_etiquette) ON DELETE 
+CASCADE
+);
+
+
+-- 6. Table HISTORIQUE (depend de TACHE)
+
+CREATE TABLE HISTORIQUE (
+id_historique   INT      PRIMARY KEY AUTO_INCREMENT,   
+id_tache    INT         NOT NULL, 
+ancien_statut   VARCHAR(20),
+nouveau_statut  VARCHAR(20)  NOT NULL,
+date_changement DATETIME     DEFAULT NOW(),
+commentaire     TEXT,
+FOREIGN KEY (id_tache) REFERENCES TACHE(id_tache) ON DELETE CASCADE
+);
